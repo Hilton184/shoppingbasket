@@ -2,8 +2,11 @@
 
 import json
 import pathlib
+from typing import Tuple
 
 import pytest
+from shoppingbasket.basket import Basket
+from shoppingbasket.catalog import Catalog, CatalogType
 from shoppingbasket.promotion import Promotion
 
 
@@ -168,3 +171,24 @@ def soup_bread_promotion():
     return Promotion(
         2, "Purchase 2 tins of soup and get half price off bread", True, 1, 2, 2, 50
     )
+
+
+@pytest.fixture
+def catalogs(
+    product_json_data_filepath: str, promotion_json_data_filepath: str
+) -> Tuple[Catalog]:
+    """Return a Tuple of Catalog objects based on the test data.
+
+    Returns:
+        Tuple[Catalog]: Tuple of Catalog objects; the product catalog and promotions catalog.
+    """
+    product_catalog = Catalog(CatalogType.PRODUCTS, product_json_data_filepath)
+    promotion_catalog = Catalog(CatalogType.PROMOTIONS, promotion_json_data_filepath)
+
+    return (product_catalog, promotion_catalog)
+
+
+@pytest.fixture
+def fresh_basket(catalogs: Tuple[Catalog]):
+    """Return a new basket object with pre-defined product and promotions catalogs based on the test data."""
+    return Basket(catalogs[0], catalogs[1])
