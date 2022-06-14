@@ -1,5 +1,7 @@
 # shoppingbasket
 
+[![Continuous Integration](https://github.com/Hilton184/shoppingbasket/actions/workflows/ci.yml/badge.svg)](https://github.com/Hilton184/shoppingbasket)                [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 shoppingbasket is a Python library with functionality for calculating the price of baskets of products, including functionality to account for product promotions.
 
 You can use the functionality of the shoppingbasket package directly from the command line, using the command line program `ShoppingBasket`. Installation and usage instructions for both the shoppingbasket python package and the ShoppingBasket command line utility are provided.
