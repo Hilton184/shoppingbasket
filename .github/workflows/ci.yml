@@ -39,8 +39,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Code Quality
-        run: poetry run black . --check
-        run: poetry run flake8 --ignore=E501,W503 . --check
+        run: |
+          poetry run black . --check
+          poetry run flake8 --ignore=E501,W503 . --check
 
       - name: Test with pytest
         run: poetry run pytest --cov .
