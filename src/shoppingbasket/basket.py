@@ -190,7 +190,7 @@ class Basket:
 
     def apply_promotions(self) -> None:
         """Loop through the products in the basket and apply promotions to the products."""
-        self._reset_promotions()
+        self.reset_promotions()
 
         for id in self.promotion_catalog.by_id:
             promotion = self._create_promotion_object(id)
