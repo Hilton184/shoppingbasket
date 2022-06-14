@@ -1,10 +1,10 @@
-name: Continuous-Integration
+name: CI
 
 on: [push]
 
 jobs:
 
-  test:
+  CI:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,7 +27,7 @@ jobs:
       - name: Code Quality
         run: |
           poetry run black . --check
-          poetry run flake8 --ignore=E501,W503 . --check
+          poetry run flake8 --ignore=E501
 
       - name: Test with pytest
         run: poetry run pytest --cov .
