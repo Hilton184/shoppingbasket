@@ -4,6 +4,7 @@ import json
 import pathlib
 
 import pytest
+from shoppingbasket.promotion import Promotion
 
 
 @pytest.fixture
@@ -153,3 +154,17 @@ def promotion_json_data_filepath(
         json.dump(json_data, json_file)
 
     return str(file_path)
+
+
+@pytest.fixture
+def apples_promotion():
+    """Return a promotion object for the test apples promotion."""
+    return Promotion(1, "Apples 10% off", True, 4, 1, 4, 10)
+
+
+@pytest.fixture
+def soup_bread_promotion():
+    """Return a promotion object for the test soup and bread promotion."""
+    return Promotion(
+        2, "Purchase 2 tins of soup and get half price off bread", True, 1, 2, 2, 50
+    )
