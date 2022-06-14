@@ -109,10 +109,10 @@ class Basket:
 
     @property
     def subtotal(self) -> int:
-        """Compute the cost of the basket before any promotions have been applied.
+        """Compute the cost of the basket before taking into account any applied promotions.
 
         Returns:
-            int: The cost of the basket before any promotions have been applied.
+            int: The cost of the basket before taking into account any applied promotions.
         """
         return sum(product.unit_price for product in self.contents)
 
@@ -198,10 +198,10 @@ class Basket:
 
     @property
     def total(self) -> int:
-        """Compute the cost of the basket after promotions have been applied.
+        """Compute the cost of the basket after taking into account any applied promotions.
 
         Returns:
-            int: The cost of the basket after promotions have been applied.
+            int: The cost of the basket after after taking into account any applied promotions.
         """
         return sum(product.promotion_price for product in self.contents)
 
