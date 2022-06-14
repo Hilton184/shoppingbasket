@@ -27,7 +27,7 @@ jobs:
       - name: Code Quality
         run: |
           poetry run black . --check
-          poetry run flake8 --ignore=E501
+          poetry run flake8 --ignore=E501 .
 
       - name: Test with pytest
         run: poetry run pytest --cov .
