@@ -24,7 +24,7 @@ Both the python package and command line utility allow the user to override this
 To install and run the code locally:
 1) Ensure you have Python and git installed. The shoppingbasket library requires python>=3.8.
 2) Clone this repository using the command `git clone https://github.com/Hilton184/shoppingbasket.git`.
-3) Run the command `pip install dist/shoppingbasket-0.1.0-py3-none-any.whl` from the root directory of the cloned repository.
+3) Run the command `pip install .` from the root directory of the cloned repository.
 4) The shoppingbasket package should now be installed.
     - Confirm this is the case by running the command `pip show shoppingbasket`.
     - Confirm you have access to the ShoppingBasket command line utility by running the command `ShoppingBasket --help`
