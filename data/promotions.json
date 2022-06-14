@@ -1,0 +1,22 @@
+{
+    "promotions": [
+        {
+            "id": 1,
+            "name": "Apples 10% off",
+            "active": true,
+            "qualifying_product_id": 4,
+            "qualifying_product_quantity": 1,
+            "discounted_product_id": 4,
+            "percent_discount": 10
+        },
+        {
+            "id": 2,
+            "name": "Purchase 2 tins of soup and get half price off bread",
+            "active": true,
+            "qualifying_product_id": 1,
+            "qualifying_product_quantity": 2,
+            "discounted_product_id": 2,
+            "percent_discount": 50
+        }
+    ]
+}
