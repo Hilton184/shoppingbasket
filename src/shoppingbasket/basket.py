@@ -1,7 +1,7 @@
 """Module for the Basket class - with functionality to add products, determine the basket total, apply promotions to the products in the basket and more."""
 
 import collections
-from typing import Any, Counter, Dict, List, Union
+from typing import Any, Counter, Dict, List
 
 from shoppingbasket.data import PRODUCTS, PROMOTIONS
 
