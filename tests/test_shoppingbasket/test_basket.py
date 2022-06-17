@@ -27,13 +27,13 @@ class Test_AddProduct:
             ("APPLES", 100),
         ],
     )
-    def test_valid_available_product(
+    def test_valid_product(
         self,
         name: str,
         unit_price: int,
         basket: Basket,
     ):
-        """Test example of a trying to add a valid and available product to the basket."""
+        """Test example of a trying to add a valid product to the basket."""
         assert basket.add_product(name) is True
         assert len(basket.contents) == 1
 
@@ -64,6 +64,7 @@ class Test_AddProduct:
         assert basket.total == 0
         assert len(basket.invalid) == 1
         assert basket.invalid[0] == name.upper()
+        assert basket.product_count.get(name.upper()) is None
 
 
 class Test_ApplyPromotions:
@@ -87,7 +88,7 @@ class Test_ApplyPromotions:
         assert basket.product_count.get("APPLES") == 1
 
     def test_apples_promotion_many_products(self, basket: Basket):
-        """Test example of applying the apples promotion from a fresh basket when adding lots of other products too."""
+        """Test example of applying the apples promotion from a fresh basket when adding lots of other products."""
         basket.add_product("APPLES")
         basket.add_product("APPLES")
         basket.add_product("APPLES")
@@ -118,9 +119,10 @@ class Test_ApplyPromotions:
 
     def test_soup_bread_promotion_v1(self, basket: Basket):
         """Test example of applying the soup_bread promotion from a fresh basket, whereby there is insufficient qualifying products purchased for a promotion to be applied."""
-        basket.add_product("BREAD")
-        basket.add_product("BREAD")
-        basket.add_product("SOUP")
+        products = ["BREAD"] * 2 + ["SOUP"]
+
+        for product in products:
+            basket.add_product(product)
 
         basket.apply_promotions()
 
@@ -145,10 +147,10 @@ class Test_ApplyPromotions:
 
     def test_soup_bread_promotion_v2(self, basket: Basket):
         """Test example of applying the soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products purchased for a promotion to be applied once."""
-        basket.add_product("BREAD")
-        basket.add_product("BREAD")
-        basket.add_product("SOUP")
-        basket.add_product("SOUP")
+        products = ["BREAD"] * 2 + ["SOUP"] * 2
+
+        for product in products:
+            basket.add_product(product)
 
         basket.apply_promotions()
 
@@ -173,11 +175,10 @@ class Test_ApplyPromotions:
 
     def test_soup_bread_promotion_v3(self, basket: Basket):
         """Test example of applying the soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products purchased for the promotion to be applied once."""
-        basket.add_product("BREAD")
-        basket.add_product("BREAD")
-        basket.add_product("SOUP")
-        basket.add_product("SOUP")
-        basket.add_product("SOUP")
+        products = ["BREAD"] * 2 + ["SOUP"] * 3
+
+        for product in products:
+            basket.add_product(product)
 
         basket.apply_promotions()
 
@@ -202,12 +203,10 @@ class Test_ApplyPromotions:
 
     def test_soup_bread_promotion_v4(self, basket: Basket):
         """Test example of applying the test soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products pruchased for the promotion to be applied twice."""
-        basket.add_product("BREAD")
-        basket.add_product("BREAD")
-        basket.add_product("SOUP")
-        basket.add_product("SOUP")
-        basket.add_product("SOUP")
-        basket.add_product("SOUP")
+        products = ["BREAD"] * 2 + ["SOUP"] * 4
+
+        for product in products:
+            basket.add_product(product)
 
         basket.apply_promotions()
 
@@ -232,17 +231,10 @@ class Test_ApplyPromotions:
 
     def test_multiple_promotions(self, basket: Basket):
         """Test example of applying the multiple promotions from a fresh basket."""
-        basket.add_product("BREAD")
-        basket.add_product("BREAD")
-        basket.add_product("SOUP")
-        basket.add_product("SOUP")
-        basket.add_product("SOUP")
-        basket.add_product("SOUP")
-        basket.add_product("SOUP")
-        basket.add_product("SOUP")
-        basket.add_product("APPLES")
-        basket.add_product("MILK")
-        basket.add_product("SOUP")
+        products = ["BREAD"] * 2 + ["SOUP"] * 7 + ["APPLES", "MILK"]
+
+        for product in products:
+            basket.add_product(product)
 
         basket.apply_promotions()
 
