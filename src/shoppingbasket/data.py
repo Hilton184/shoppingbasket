@@ -10,11 +10,11 @@ PROMOTIONS should be a dictionary, with keys the promotion names and values a di
 - percent_discount: The percentage to discount the discounted product.
 """
 
-from typing import Dict, Union
+from typing import Any, Dict
 
 PRODUCTS: Dict[str, int] = {"SOUP": 65, "BREAD": 80, "MILK": 130, "APPLES": 100}
 
-PROMOTIONS: Dict[str, Dict[str, Union[str, int]]] = {
+PROMOTIONS: Dict[str, Dict[str, Any]] = {
     "Apples 10% off": {
         "qualifying_product": "APPLES",
         "qualifying_product_quantity": 1,

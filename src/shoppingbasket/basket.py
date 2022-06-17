@@ -1,7 +1,7 @@
 """Module for the Basket class - with functionality to add products, determine the basket total, apply promotions to the products in the basket and more."""
 
 import collections
-from typing import Counter, Dict, List, Union
+from typing import Any, Counter, Dict, List, Union
 
 from shoppingbasket.data import PRODUCTS, PROMOTIONS
 
@@ -42,7 +42,7 @@ class Basket:
         Returns:
             int: The cost of the basket before taking into account any applied promotions.
         """
-        return sum(self.PRODUCTS.get(product) for product in self.contents)
+        return sum(self.PRODUCTS.get(product, 0) for product in self.contents)
 
     @property
     def total_discount(self) -> int:
@@ -92,13 +92,13 @@ class Basket:
             self.apply_promotion(promotion, promotion_details)
 
     def apply_promotion(
-        self, promotion_name: str, promotion_details: Dict[str, Union[str, int]]
-    ):
+        self, promotion_name: str, promotion_details: Dict[str, Any]
+    ) -> None:
         """Apply the promotion to the products in the basket.
 
         Args:
             promotion_name (str): The name of the promotion to apply.
-            promotion_details (Dict[str, Union[str, int]]): Details of the promotion to be applied. Keys should include qualifying_product, discounted_product, qualifying_product_quantity and percent_discount.
+            promotion_details (Dict[str, Any]): Details of the promotion to be applied. Keys should include qualifying_product, discounted_product, qualifying_product_quantity and percent_discount.
         """
         qualifying_product_count = self.product_count[
             promotion_details["qualifying_product"]
