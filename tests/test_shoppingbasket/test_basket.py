@@ -41,6 +41,7 @@ class Test_AddProduct:
         assert basket.total == unit_price
 
         assert basket.contents[0] == name.upper()
+        assert basket.product_count.get(name.upper()) == 1
 
     @pytest.mark.parametrize(
         "name",
@@ -83,6 +84,7 @@ class Test_ApplyPromotions:
 
         assert len(basket.contents) == 1
         assert len(basket.invalid) == 0
+        assert basket.product_count.get("APPLES") == 1
 
     def test_apples_promotion_many_products(self, basket: Basket):
         """Test example of applying the apples promotion from a fresh basket when adding lots of other products too."""
@@ -108,6 +110,12 @@ class Test_ApplyPromotions:
         assert len(basket.contents) == 5
         assert len(basket.invalid) == 3
 
+        assert basket.product_count.get("APPLES") == 4
+        assert basket.product_count.get("MILK") == 1
+        assert basket.product_count.get("TOMATOES") is None
+        assert basket.product_count.get("CHICKEN") is None
+        assert basket.product_count.get("TEA") is None
+
     def test_soup_bread_promotion_v1(self, basket: Basket):
         """Test example of applying the soup_bread promotion from a fresh basket, whereby there is insufficient qualifying products purchased for a promotion to be applied."""
         basket.add_product("BREAD")
@@ -131,6 +139,9 @@ class Test_ApplyPromotions:
 
         assert len(basket.contents) == 3
         assert len(basket.invalid) == 0
+
+        assert basket.product_count.get("BREAD") == 2
+        assert basket.product_count.get("SOUP") == 1
 
     def test_soup_bread_promotion_v2(self, basket: Basket):
         """Test example of applying the soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products purchased for a promotion to be applied once."""
@@ -156,6 +167,9 @@ class Test_ApplyPromotions:
 
         assert len(basket.contents) == 4
         assert len(basket.invalid) == 0
+
+        assert basket.product_count.get("BREAD") == 2
+        assert basket.product_count.get("SOUP") == 2
 
     def test_soup_bread_promotion_v3(self, basket: Basket):
         """Test example of applying the soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products purchased for the promotion to be applied once."""
@@ -183,6 +197,9 @@ class Test_ApplyPromotions:
         assert len(basket.contents) == 5
         assert len(basket.invalid) == 0
 
+        assert basket.product_count.get("BREAD") == 2
+        assert basket.product_count.get("SOUP") == 3
+
     def test_soup_bread_promotion_v4(self, basket: Basket):
         """Test example of applying the test soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products pruchased for the promotion to be applied twice."""
         basket.add_product("BREAD")
@@ -209,6 +226,9 @@ class Test_ApplyPromotions:
 
         assert len(basket.contents) == 6
         assert len(basket.invalid) == 0
+
+        assert basket.product_count.get("BREAD") == 2
+        assert basket.product_count.get("SOUP") == 4
 
     def test_multiple_promotions(self, basket: Basket):
         """Test example of applying the multiple promotions from a fresh basket."""
@@ -243,6 +263,10 @@ class Test_ApplyPromotions:
 
         assert len(basket.contents) == 11
         assert len(basket.invalid) == 0
+
+        assert basket.product_count.get("BREAD") == 2
+        assert basket.product_count.get("SOUP") == 7
+        assert basket.product_count.get("APPLES") == 1
 
 
 class Test_EmptyBasket:
