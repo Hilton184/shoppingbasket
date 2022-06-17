@@ -94,11 +94,8 @@ basket.subtotal  # 375
 # Compute the cost of the basket after any applied promotions are taken into account
 basket.total  # 375 (since no promotions yet applied)
 
-# Get the names of each products not added to the contents of the basket due to unavailability
-basket.unavailable_products  # ["tomatoes"]
-
 # Get the names of each products not added to the contents of the basket as they are invalid
-basket.invalid  # ["chicken"]
+basket.invalid  # ["tomatoes, "chicken"]
 
 # Get the promotions which have been applied and the discount provided
 basket.promotion_discounts  # {}
