@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>shoppingbasket.cli API documentation</title>
-<meta name="description" content="Command line interface utility for the shoppingbasket module." />
+<title>shoppingbasket.data API documentation</title>
+<meta name="description" content="Data store for products and promotions …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,62 +19,52 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>shoppingbasket.cli</code></h1>
+<h1 class="title">Module <code>shoppingbasket.data</code></h1>
 </header>
 <section id="section-intro">
-<p>Command line interface utility for the shoppingbasket module.</p>
+<p>Data store for products and promotions.</p>
+<p>PRODUCTS should be a dictionary, with keys the product names and values the unit price of the product in pence.</p>
+<p>PROMOTIONS should be a dictionary, with keys the promotion names and values a dictionary of promotion details. The dictionary of promotion details should include:</p>
+<ul>
+<li>qualifying_product: The name of the product that must be purchased to qualify for the promotion.</li>
+<li>qualifying_product_quantity: The number of the qualifying product that must be purchased to qualify for the promotion.</li>
+<li>discounted_product: the name of the product to be discounted.</li>
+<li>percent_discount: The percentage to discount the discounted product.</li>
+</ul>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;Command line interface utility for the shoppingbasket module.&#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34;Data store for products and promotions.
 
+PRODUCTS should be a dictionary, with keys the product names and values the unit price of the product in pence.
 
-from typing import Iterable
+PROMOTIONS should be a dictionary, with keys the promotion names and values a dictionary of promotion details. The dictionary of promotion details should include:
 
-import click
+- qualifying_product: The name of the product that must be purchased to qualify for the promotion.
+- qualifying_product_quantity: The number of the qualifying product that must be purchased to qualify for the promotion.
+- discounted_product: the name of the product to be discounted.
+- percent_discount: The percentage to discount the discounted product.
+&#34;&#34;&#34;
 
-import shoppingbasket._utils
-from shoppingbasket.basket import Basket
+from typing import Dict, Union
 
+PRODUCTS: Dict[str, int] = {&#34;SOUP&#34;: 65, &#34;BREAD&#34;: 80, &#34;MILK&#34;: 130, &#34;APPLES&#34;: 100}
 
-def _handle_invalid_products_output(basket: Basket) -&gt; None:
-    for product in basket.invalid:
-        print(
-            f&#34;&#34;&#34;Product &#34;{product}&#34; is an invalid product. It has not been added to the basket.&#34;&#34;&#34;
-        )
-
-
-def _handle_primary_output(basket: Basket) -&gt; None:
-    print(f&#34;Subtotal: {shoppingbasket._utils._currency_format(basket.subtotal)}&#34;)
-
-    if not basket.total_discount:
-        print(&#34;(No offers available)&#34;)
-
-    for promotion, discount in basket.promotion_discounts.items():
-
-        if discount:
-            print(f&#34;{promotion}: -{shoppingbasket._utils._currency_format(discount)}&#34;)
-
-    print(f&#34;Total price: {shoppingbasket._utils._currency_format(basket.total)}&#34;)
-
-
-@click.command()
-@click.argument(&#34;products&#34;, nargs=-1)
-def main(products: Iterable):
-    &#34;&#34;&#34;Entrypoint for running the command line utility of the shoppingbasket package. Specify one or more products (via the PRODUCTS positional argument) to add to the basket.&#34;&#34;&#34;
-    products = [*products]
-
-    basket = Basket()
-
-    for product_name in products:
-        basket.add_product(product_name)
-
-    basket.apply_promotions()
-
-    _handle_invalid_products_output(basket)
-
-    _handle_primary_output(basket)</code></pre>
+PROMOTIONS: Dict[str, Dict[str, Union[str, int]]] = {
+    &#34;Apples 10% off&#34;: {
+        &#34;qualifying_product&#34;: &#34;APPLES&#34;,
+        &#34;qualifying_product_quantity&#34;: 1,
+        &#34;discounted_product&#34;: &#34;APPLES&#34;,
+        &#34;percent_discount&#34;: 10,
+    },
+    &#34;Purchase 2 tins of soup and get half price off bread&#34;: {
+        &#34;qualifying_product&#34;: &#34;SOUP&#34;,
+        &#34;qualifying_product_quantity&#34;: 2,
+        &#34;discounted_product&#34;: &#34;BREAD&#34;,
+        &#34;percent_discount&#34;: 50,
+    },
+}</code></pre>
 </details>
 </section>
 <section>
