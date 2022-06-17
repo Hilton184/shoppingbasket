@@ -1,111 +1,46 @@
 """Test suite for the basket module."""
 
-from typing import Tuple
 
 import pytest
 from shoppingbasket.basket import Basket
-from shoppingbasket.catalog import Catalog
-from shoppingbasket.product import Product
-from shoppingbasket.promotion import Promotion
 
 
 class Test_BasketInit:
     """Test suite for the Basket.__init__ method."""
 
-    def test_empty_basket(self, fresh_basket: Basket):
+    def test_empty_basket(self, basket: Basket):
         """Test creating an empty basket."""
-        assert (
-            fresh_basket.contents
-            == fresh_basket.promoted_products
-            == fresh_basket.unavailable_products
-            == fresh_basket.invalid_products
-            == []
-        )
+        assert basket.contents == basket.invalid == []
 
-
-class Test_ProductInCatalog:
-    """Test suite for the Basket._product_in_catalog static method."""
-
-    @pytest.mark.parametrize("name", ["APPLES", "soup", "breAD", "MILK"])
-    def test_valid_available_product(
-        self,
-        name: str,
-        catalogs: Tuple[Catalog],
-    ):
-        """Test example of a valid available product and see if it is found in the catalog."""
-        product_catalog, _ = catalogs
-
-        assert Basket._product_in_catalog(name, product_catalog) is True
-
-    @pytest.mark.parametrize("name", ["TOMAtoes", "CucumBeR", "peanuts", "LAMB STEAK"])
-    def test_valid_unavailable_product(
-        self,
-        name: str,
-        catalogs: Tuple[Catalog],
-    ):
-        """Test example of a valid unavailable product and see if it is found in the catalog."""
-        product_catalog, _ = catalogs
-
-        assert Basket._product_in_catalog(name, product_catalog) is True
-
-    @pytest.mark.parametrize("name", ["chicken", "tea", "COFFEE"])
-    def test_invalid_product(
-        self,
-        name: str,
-        catalogs: Tuple[Catalog],
-    ):
-        """Test example of an invalid product and confirm it is not found in the catalog."""
-        product_catalog, _ = catalogs
-
-        assert Basket._product_in_catalog(name, product_catalog) is False
-
-
-class Test_ProductAvailable:
-    """Test suite for the Basket._product_available static method. This method only gets called for products which are valid."""
-
-    @pytest.mark.parametrize("name", ["APPLES", "soup", "breAD", "MILK"])
-    def test_valid_available_product(self, name: str, catalogs: Tuple[Catalog]):
-        """Test example of a valid available product and confirm the product is available."""
-        product_catalog, _ = catalogs
-
-        assert Basket._product_available(name, product_catalog) is True
-
-    @pytest.mark.parametrize("name", ["TOMAtoes", "CucumBeR", "peanuts", "LAMB STEAK"])
-    def test_valid_unavailable_product(self, name: str, catalogs: Tuple[Catalog]):
-        """Test example of a valid unavailable product and confirm the product is unavailable."""
-        product_catalog, _ = catalogs
-
-        assert Basket._product_available(name, product_catalog) is False
+        assert basket.promotion_discounts == {}
 
 
 class Test_AddProduct:
     """Test suite for the Basket.add_product method."""
 
     @pytest.mark.parametrize(
-        "name,id, unit_price, available,",
+        "name, unit_price",
         [
-            ("SOUP", 1, 65, True),
-            ("breaD", 2, 80, True),
-            ("MILK", 3, 130, True),
-            ("APPLES", 4, 100, True),
+            ("SOUP", 65),
+            ("breaD", 80),
+            ("MILK", 130),
+            ("APPLES", 100),
         ],
     )
     def test_valid_available_product(
         self,
         name: str,
-        id: int,
         unit_price: int,
-        available: bool,
-        fresh_basket: Basket,
+        basket: Basket,
     ):
         """Test example of a trying to add a valid and available product to the basket."""
-        assert fresh_basket.add_product(name) is True
-        assert len(fresh_basket.contents) == 1
+        assert basket.add_product(name) is True
+        assert len(basket.contents) == 1
 
-        assert fresh_basket.subtotal == unit_price
-        assert fresh_basket.total == unit_price
+        assert basket.subtotal == unit_price
+        assert basket.total == unit_price
 
-        assert fresh_basket.contents[0] == Product(name, id, unit_price, available)
+        assert basket.contents[0] == name.upper()
 
     @pytest.mark.parametrize(
         "name",
@@ -116,236 +51,212 @@ class Test_AddProduct:
             "LAMB STEAK",
         ],
     )
-    def test_valid_unavailable_product(
-        self,
-        name: str,
-        fresh_basket: Basket,
-    ):
-        """Test example of trying to add a valid but unavailable product to the basket."""
-        assert fresh_basket.add_product(name) is False
-        assert len(fresh_basket.contents) == 0
-        assert fresh_basket.subtotal == 0
-        assert fresh_basket.total == 0
-        assert len(fresh_basket.unavailable_products) == 1
-        assert fresh_basket.unavailable_products[0] == name
-
-    @pytest.mark.parametrize(
-        "name",
-        [
-            "CHICKEN",
-            "TEA",
-        ],
-    )
     def test_invalid_product(
         self,
         name: str,
-        fresh_basket: Basket,
+        basket: Basket,
     ):
-        """Test example of trying to add an invalid product to the basket."""
-        assert fresh_basket.add_product(name) is False
-        assert len(fresh_basket.contents) == 0
-        assert fresh_basket.subtotal == 0
-        assert fresh_basket.total == 0
-        assert len(fresh_basket.invalid_products) == 1
-        assert fresh_basket.invalid_products[0] == name
+        """Test example of trying to add a invalid products to the basket."""
+        assert basket.add_product(name) is False
+        assert len(basket.contents) == 0
+        assert basket.subtotal == 0
+        assert basket.total == 0
+        assert len(basket.invalid) == 1
+        assert basket.invalid[0] == name.upper()
 
 
 class Test_ApplyPromotions:
     """Test suite for the Basket.apply_promotions method."""
 
-    def test_apples_promotion(self, fresh_basket: Basket, apples_promotion: Promotion):
-        """Test example of applying the test apples promotion from a fresh basket."""
-        fresh_basket.add_product("APPLES")
-        fresh_basket.apply_promotions()
-        assert fresh_basket.contents[0].promotion == apples_promotion
-        assert len(fresh_basket.promoted_products) == 1
-        assert fresh_basket.subtotal == 100
-        assert fresh_basket.total == 90
-
-    def test_apples_promotion_many_products(
-        self, fresh_basket: Basket, apples_promotion: Promotion
-    ):
-        """Test example of applying the test apples promotion from a fresh basket."""
-        fresh_basket.add_product("APPLES")
-        fresh_basket.add_product("APPLES")
-        fresh_basket.add_product("APPLES")
-        fresh_basket.add_product("MILK")
-        fresh_basket.add_product("APPLES")
-        fresh_basket.add_product("CHICKEN")
-        fresh_basket.add_product("TEA")
-        fresh_basket.add_product("TOMATOES")
-
-        fresh_basket.apply_promotions()
+    def test_apples_promotion(self, basket: Basket):
+        """Test example of applying the apples promotion from a fresh basket."""
+        basket.add_product("APPLES")
+        basket.apply_promotions()
 
         assert (
-            fresh_basket.contents[0].promotion
-            == fresh_basket.contents[1].promotion
-            == fresh_basket.contents[2].promotion
-            == fresh_basket.contents[4].promotion
-            == apples_promotion
+            sum(1 for discount in basket.promotion_discounts.values() if discount) == 1
         )
+        assert basket.promotion_discounts.get("Apples 10% off") == 10
+        assert basket.subtotal == 100
+        assert basket.total_discount == 10
+        assert basket.total == 90
 
-        assert fresh_basket.contents[3].promotion is None
+        assert len(basket.contents) == 1
+        assert len(basket.invalid) == 0
 
-        assert len(fresh_basket.promoted_products) == 4
-        assert len(fresh_basket.invalid_products) == 2
-        assert len(fresh_basket.unavailable_products) == 1
+    def test_apples_promotion_many_products(self, basket: Basket):
+        """Test example of applying the apples promotion from a fresh basket when adding lots of other products too."""
+        basket.add_product("APPLES")
+        basket.add_product("APPLES")
+        basket.add_product("APPLES")
+        basket.add_product("MILK")
+        basket.add_product("APPLES")
+        basket.add_product("CHICKEN")
+        basket.add_product("TEA")
+        basket.add_product("TOMATOES")
 
-        assert len(fresh_basket.contents) == 5
-
-        assert fresh_basket.subtotal == 530
-        assert fresh_basket.total == 490
-
-    def test_soup_bread_promotion_v1(
-        self, fresh_basket: Basket, soup_bread_promotion: Promotion
-    ):
-        """Test example of applying the test soup_bread promotion from a fresh basket, whereby there is insufficient qualifying products purchased for a promotion to be applied."""
-        fresh_basket.add_product("BREAD")
-        fresh_basket.add_product("BREAD")
-        fresh_basket.add_product("SOUP")
-
-        fresh_basket.apply_promotions()
+        basket.apply_promotions()
 
         assert (
-            fresh_basket.contents[0].promotion
-            == fresh_basket.contents[1].promotion
-            == fresh_basket.contents[2].promotion
-            is None
+            sum(1 for discount in basket.promotion_discounts.values() if discount) == 1
         )
-        assert len(fresh_basket.promoted_products) == 0
-        assert fresh_basket.subtotal == 225
-        assert fresh_basket.total == 225
+        assert basket.promotion_discounts.get("Apples 10% off") == 40
+        assert basket.subtotal == 530
+        assert basket.total_discount == 40
+        assert basket.total == 490
 
-    def test_soup_bread_promotion_v2(
-        self, fresh_basket: Basket, soup_bread_promotion: Promotion
-    ):
-        """Test example of applying the test soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products purchased for a promotion to be applied."""
-        fresh_basket.add_product("BREAD")
-        fresh_basket.add_product("BREAD")
-        fresh_basket.add_product("SOUP")
-        fresh_basket.add_product("SOUP")
+        assert len(basket.contents) == 5
+        assert len(basket.invalid) == 3
 
-        fresh_basket.apply_promotions()
+    def test_soup_bread_promotion_v1(self, basket: Basket):
+        """Test example of applying the soup_bread promotion from a fresh basket, whereby there is insufficient qualifying products purchased for a promotion to be applied."""
+        basket.add_product("BREAD")
+        basket.add_product("BREAD")
+        basket.add_product("SOUP")
 
-        assert fresh_basket.contents[0].promotion == soup_bread_promotion
+        basket.apply_promotions()
 
         assert (
-            fresh_basket.contents[1].promotion
-            == fresh_basket.contents[2].promotion
-            == fresh_basket.contents[3].promotion
-            is None
+            sum(1 for discount in basket.promotion_discounts.values() if discount) == 0
         )
+        assert (
+            basket.promotion_discounts.get(
+                "Purchase 2 tins of soup and get half price off bread"
+            )
+            == 0
+        )
+        assert basket.subtotal == 225
+        assert basket.total_discount == 0
+        assert basket.total == 225
 
-        assert len(fresh_basket.promoted_products) == 1
+        assert len(basket.contents) == 3
+        assert len(basket.invalid) == 0
 
-        assert fresh_basket.subtotal == 290
-        assert fresh_basket.total == 250
+    def test_soup_bread_promotion_v2(self, basket: Basket):
+        """Test example of applying the soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products purchased for a promotion to be applied once."""
+        basket.add_product("BREAD")
+        basket.add_product("BREAD")
+        basket.add_product("SOUP")
+        basket.add_product("SOUP")
 
-    def test_soup_bread_promotion_v3(
-        self, fresh_basket: Basket, soup_bread_promotion: Promotion
-    ):
-        """Test example of applying the test soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products purchased for only 1 promotion to be applied."""
-        fresh_basket.add_product("BREAD")
-        fresh_basket.add_product("BREAD")
-        fresh_basket.add_product("SOUP")
-        fresh_basket.add_product("SOUP")
-        fresh_basket.add_product("SOUP")
-
-        fresh_basket.apply_promotions()
-
-        assert fresh_basket.contents[0].promotion == soup_bread_promotion
+        basket.apply_promotions()
 
         assert (
-            fresh_basket.contents[1].promotion
-            == fresh_basket.contents[2].promotion
-            == fresh_basket.contents[3].promotion
-            == fresh_basket.contents[4].promotion
-            is None
+            sum(1 for discount in basket.promotion_discounts.values() if discount) == 1
         )
+        assert (
+            basket.promotion_discounts.get(
+                "Purchase 2 tins of soup and get half price off bread"
+            )
+            == 40
+        )
+        assert basket.subtotal == 290
+        assert basket.total_discount == 40
+        assert basket.total == 250
 
-        assert len(fresh_basket.promoted_products) == 1
+        assert len(basket.contents) == 4
+        assert len(basket.invalid) == 0
 
-        assert fresh_basket.subtotal == 355
-        assert fresh_basket.total == 315
+    def test_soup_bread_promotion_v3(self, basket: Basket):
+        """Test example of applying the soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products purchased for the promotion to be applied once."""
+        basket.add_product("BREAD")
+        basket.add_product("BREAD")
+        basket.add_product("SOUP")
+        basket.add_product("SOUP")
+        basket.add_product("SOUP")
 
-    def test_soup_bread_promotion_v4(
-        self, fresh_basket: Basket, soup_bread_promotion: Promotion
-    ):
-        """Test example of applying the test soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products purchased for only 1 promotion to be applied."""
-        fresh_basket.add_product("BREAD")
-        fresh_basket.add_product("BREAD")
-        fresh_basket.add_product("SOUP")
-        fresh_basket.add_product("SOUP")
-        fresh_basket.add_product("SOUP")
-        fresh_basket.add_product("SOUP")
-
-        fresh_basket.apply_promotions()
-
-        assert fresh_basket.contents[0].promotion == soup_bread_promotion
-        assert fresh_basket.contents[1].promotion == soup_bread_promotion
+        basket.apply_promotions()
 
         assert (
-            fresh_basket.contents[2].promotion
-            == fresh_basket.contents[3].promotion
-            == fresh_basket.contents[4].promotion
-            == fresh_basket.contents[5].promotion
-            is None
+            sum(1 for discount in basket.promotion_discounts.values() if discount) == 1
         )
+        assert (
+            basket.promotion_discounts.get(
+                "Purchase 2 tins of soup and get half price off bread"
+            )
+            == 40
+        )
+        assert basket.subtotal == 355
+        assert basket.total_discount == 40
+        assert basket.total == 315
 
-        assert len(fresh_basket.promoted_products) == 2
+        assert len(basket.contents) == 5
+        assert len(basket.invalid) == 0
 
-        assert fresh_basket.subtotal == 420
-        assert fresh_basket.total == 340
+    def test_soup_bread_promotion_v4(self, basket: Basket):
+        """Test example of applying the test soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products pruchased for the promotion to be applied twice."""
+        basket.add_product("BREAD")
+        basket.add_product("BREAD")
+        basket.add_product("SOUP")
+        basket.add_product("SOUP")
+        basket.add_product("SOUP")
+        basket.add_product("SOUP")
 
-    def test_soup_bread_promotion_v5(
-        self, fresh_basket: Basket, soup_bread_promotion: Promotion
-    ):
-        """Test example of applying the test soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products purchased for only 1 promotion to be applied."""
-        fresh_basket.add_product("BREAD")
-        fresh_basket.add_product("BREAD")
-        fresh_basket.add_product("SOUP")
-        fresh_basket.add_product("SOUP")
-        fresh_basket.add_product("SOUP")
-        fresh_basket.add_product("SOUP")
-        fresh_basket.add_product("SOUP")
-        fresh_basket.add_product("SOUP")
-        fresh_basket.add_product("SOUP")
-
-        fresh_basket.apply_promotions()
-
-        assert fresh_basket.contents[0].promotion == soup_bread_promotion
-        assert fresh_basket.contents[1].promotion == soup_bread_promotion
+        basket.apply_promotions()
 
         assert (
-            fresh_basket.contents[2].promotion
-            == fresh_basket.contents[3].promotion
-            == fresh_basket.contents[4].promotion
-            == fresh_basket.contents[5].promotion
-            == fresh_basket.contents[6].promotion
-            == fresh_basket.contents[7].promotion
-            == fresh_basket.contents[8].promotion
-            is None
+            sum(1 for discount in basket.promotion_discounts.values() if discount) == 1
         )
+        assert (
+            basket.promotion_discounts.get(
+                "Purchase 2 tins of soup and get half price off bread"
+            )
+            == 80
+        )
+        assert basket.subtotal == 420
+        assert basket.total_discount == 80
+        assert basket.total == 340
 
-        assert len(fresh_basket.promoted_products) == 2
+        assert len(basket.contents) == 6
+        assert len(basket.invalid) == 0
 
-        assert fresh_basket.subtotal == 615
-        assert fresh_basket.total == 535
+    def test_multiple_promotions(self, basket: Basket):
+        """Test example of applying the multiple promotions from a fresh basket."""
+        basket.add_product("BREAD")
+        basket.add_product("BREAD")
+        basket.add_product("SOUP")
+        basket.add_product("SOUP")
+        basket.add_product("SOUP")
+        basket.add_product("SOUP")
+        basket.add_product("SOUP")
+        basket.add_product("SOUP")
+        basket.add_product("APPLES")
+        basket.add_product("MILK")
+        basket.add_product("SOUP")
+
+        basket.apply_promotions()
+
+        assert (
+            sum(1 for discount in basket.promotion_discounts.values() if discount) == 2
+        )
+        assert (
+            basket.promotion_discounts.get(
+                "Purchase 2 tins of soup and get half price off bread"
+            )
+            == 80
+        )
+        assert basket.promotion_discounts.get("Apples 10% off") == 10
+
+        assert basket.subtotal == 845
+        assert basket.total_discount == 90
+        assert basket.total == 755
+
+        assert len(basket.contents) == 11
+        assert len(basket.invalid) == 0
 
 
 class Test_EmptyBasket:
     """Test suite for the Basket.empty_basket method."""
 
-    def test_empty_basket(self, fresh_basket: Basket, apples_promotion: Promotion):
-        """Test example of applying the test apples promotion from a fresh basket."""
-        fresh_basket.add_product("APPLES")
-        fresh_basket.apply_promotions()
+    def test_empty_basket(self, basket: Basket):
+        """Test example of adding some products to the basket and then emptying the basket.."""
+        basket.add_product("APPLES")
+        basket.add_product("APPLES")
 
-        fresh_basket.empty_basket()
+        basket.apply_promotions()
 
-        assert (
-            fresh_basket.contents
-            == fresh_basket.invalid_products
-            == fresh_basket.unavailable_products
-            == []
-        )
+        basket.empty_basket()
+
+        assert basket.contents == basket.invalid == []
+
+        assert basket.promotion_discounts == {}
