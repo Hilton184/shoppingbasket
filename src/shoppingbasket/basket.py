@@ -17,7 +17,7 @@ class Basket:
     ) -> None:
         """Create a Basket object with no contents.
 
-        Available products and their price per unit in pence are defined in the PRODUCTS and PROMOTIONS class variable.
+        Available products and their price per unit in pence are defined in the PRODUCTS class variable.
 
         Available promotions and requird details are defined in the PROMOTIONS class variable.
         """
@@ -31,7 +31,7 @@ class Basket:
         """Count the number of each product in the basket.
 
         Returns:
-            Counter: Key value pairs, with keys product name and value the quantity of that product in the basket.
+            Counter: Key value pairs, with keys the product name and value the quantity of that product in the basket.
         """
         return collections.Counter(self.contents)
 
@@ -49,7 +49,7 @@ class Basket:
         """Compute the total discount on the basket due the applied promotions.
 
         Returns:
-            int: The total discount on the basket due to promotions.
+            int: The total discount on the basket due to applied promotions.
         """
         return sum(discount for discount in self.promotion_discounts.values())
 

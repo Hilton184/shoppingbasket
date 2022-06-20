@@ -36,6 +36,20 @@ class Test_MainFunction:
         )
         assert response.exit_code == 0
 
+    def test_several_single_available_product_on_promotion_multiple_times(self):
+        """Test single product on promotion."""
+        products_list = ["APPLES", "Apples", "apples", "APPLes"]
+
+        runner = CliRunner()
+
+        response = runner.invoke(main, products_list)
+
+        assert (
+            response.output
+            == "Subtotal: £4.00\nApples 10% off: -40p\nTotal price: £3.60\n"
+        )
+        assert response.exit_code == 0
+
     def test_several_available_products(self):
         """Test several available products including promotions."""
         products_list = ["APPLES", "MILK", "SOUP", "BREAD"]
@@ -50,7 +64,7 @@ class Test_MainFunction:
         )
         assert response.exit_code == 0
 
-    def test_several_available_products_with_soup_promo(self):
+    def test_several_available_products_with_several_promotions(self):
         """Test several available products including several promotions."""
         products_list = ["APPLES", "MILK", "SOUP", "BREAD", "SOUP"]
 
@@ -64,7 +78,7 @@ class Test_MainFunction:
         )
         assert response.exit_code == 0
 
-    def test_several_available_products_with_soup_promo_and_invalid_products(
+    def test_several_available_products_with_several_promotions_and_invalids(
         self,
     ):
         """Test several available products including several promotions including invalid products."""

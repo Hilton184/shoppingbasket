@@ -30,7 +30,7 @@
 <pre><code class="python">&#34;&#34;&#34;Module for the Basket class - with functionality to add products, determine the basket total, apply promotions to the products in the basket and more.&#34;&#34;&#34;
 
 import collections
-from typing import Counter, Dict, List, Union
+from typing import Any, Counter, Dict, List
 
 from shoppingbasket.data import PRODUCTS, PROMOTIONS
 
@@ -46,7 +46,7 @@ class Basket:
     ) -&gt; None:
         &#34;&#34;&#34;Create a Basket object with no contents.
 
-        Available products and their price per unit in pence are defined in the PRODUCTS and PROMOTIONS class variable.
+        Available products and their price per unit in pence are defined in the PRODUCTS class variable.
 
         Available promotions and requird details are defined in the PROMOTIONS class variable.
         &#34;&#34;&#34;
@@ -60,7 +60,7 @@ class Basket:
         &#34;&#34;&#34;Count the number of each product in the basket.
 
         Returns:
-            Counter: Key value pairs, with keys product name and value the quantity of that product in the basket.
+            Counter: Key value pairs, with keys the product name and value the quantity of that product in the basket.
         &#34;&#34;&#34;
         return collections.Counter(self.contents)
 
@@ -71,14 +71,14 @@ class Basket:
         Returns:
             int: The cost of the basket before taking into account any applied promotions.
         &#34;&#34;&#34;
-        return sum(self.PRODUCTS.get(product) for product in self.contents)
+        return sum(self.PRODUCTS.get(product, 0) for product in self.contents)
 
     @property
     def total_discount(self) -&gt; int:
         &#34;&#34;&#34;Compute the total discount on the basket due the applied promotions.
 
         Returns:
-            int: The total discount on the basket due to promotions.
+            int: The total discount on the basket due to applied promotions.
         &#34;&#34;&#34;
         return sum(discount for discount in self.promotion_discounts.values())
 
@@ -121,13 +121,13 @@ class Basket:
             self.apply_promotion(promotion, promotion_details)
 
     def apply_promotion(
-        self, promotion_name: str, promotion_details: Dict[str, Union[str, int]]
-    ):
+        self, promotion_name: str, promotion_details: Dict[str, Any]
+    ) -&gt; None:
         &#34;&#34;&#34;Apply the promotion to the products in the basket.
 
         Args:
             promotion_name (str): The name of the promotion to apply.
-            promotion_details (Dict[str, Union[str, int]]): Details of the promotion to be applied. Keys should include qualifying_product, discounted_product, qualifying_product_quantity and percent_discount.
+            promotion_details (Dict[str, Any]): Details of the promotion to be applied. Keys should include qualifying_product, discounted_product, qualifying_product_quantity and percent_discount.
         &#34;&#34;&#34;
         qualifying_product_count = self.product_count[
             promotion_details[&#34;qualifying_product&#34;]
@@ -164,7 +164,7 @@ class Basket:
 <dd>
 <div class="desc"><p>Blueprint for Basket object.</p>
 <p>Create a Basket object with no contents.</p>
-<p>Available products and their price per unit in pence are defined in the PRODUCTS and PROMOTIONS class variable.</p>
+<p>Available products and their price per unit in pence are defined in the PRODUCTS class variable.</p>
 <p>Available promotions and requird details are defined in the PROMOTIONS class variable.</p></div>
 <details class="source">
 <summary>
@@ -181,7 +181,7 @@ class Basket:
     ) -&gt; None:
         &#34;&#34;&#34;Create a Basket object with no contents.
 
-        Available products and their price per unit in pence are defined in the PRODUCTS and PROMOTIONS class variable.
+        Available products and their price per unit in pence are defined in the PRODUCTS class variable.
 
         Available promotions and requird details are defined in the PROMOTIONS class variable.
         &#34;&#34;&#34;
@@ -195,7 +195,7 @@ class Basket:
         &#34;&#34;&#34;Count the number of each product in the basket.
 
         Returns:
-            Counter: Key value pairs, with keys product name and value the quantity of that product in the basket.
+            Counter: Key value pairs, with keys the product name and value the quantity of that product in the basket.
         &#34;&#34;&#34;
         return collections.Counter(self.contents)
 
@@ -206,14 +206,14 @@ class Basket:
         Returns:
             int: The cost of the basket before taking into account any applied promotions.
         &#34;&#34;&#34;
-        return sum(self.PRODUCTS.get(product) for product in self.contents)
+        return sum(self.PRODUCTS.get(product, 0) for product in self.contents)
 
     @property
     def total_discount(self) -&gt; int:
         &#34;&#34;&#34;Compute the total discount on the basket due the applied promotions.
 
         Returns:
-            int: The total discount on the basket due to promotions.
+            int: The total discount on the basket due to applied promotions.
         &#34;&#34;&#34;
         return sum(discount for discount in self.promotion_discounts.values())
 
@@ -256,13 +256,13 @@ class Basket:
             self.apply_promotion(promotion, promotion_details)
 
     def apply_promotion(
-        self, promotion_name: str, promotion_details: Dict[str, Union[str, int]]
-    ):
+        self, promotion_name: str, promotion_details: Dict[str, Any]
+    ) -&gt; None:
         &#34;&#34;&#34;Apply the promotion to the products in the basket.
 
         Args:
             promotion_name (str): The name of the promotion to apply.
-            promotion_details (Dict[str, Union[str, int]]): Details of the promotion to be applied. Keys should include qualifying_product, discounted_product, qualifying_product_quantity and percent_discount.
+            promotion_details (Dict[str, Any]): Details of the promotion to be applied. Keys should include qualifying_product, discounted_product, qualifying_product_quantity and percent_discount.
         &#34;&#34;&#34;
         qualifying_product_count = self.product_count[
             promotion_details[&#34;qualifying_product&#34;]
@@ -302,7 +302,7 @@ class Basket:
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>Counter</code></dt>
-<dd>Key value pairs, with keys product name and value the quantity of that product in the basket.</dd>
+<dd>Key value pairs, with keys the product name and value the quantity of that product in the basket.</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -313,7 +313,7 @@ def product_count(self) -&gt; Counter[str]:
     &#34;&#34;&#34;Count the number of each product in the basket.
 
     Returns:
-        Counter: Key value pairs, with keys product name and value the quantity of that product in the basket.
+        Counter: Key value pairs, with keys the product name and value the quantity of that product in the basket.
     &#34;&#34;&#34;
     return collections.Counter(self.contents)</code></pre>
 </details>
@@ -337,7 +337,7 @@ def subtotal(self) -&gt; int:
     Returns:
         int: The cost of the basket before taking into account any applied promotions.
     &#34;&#34;&#34;
-    return sum(self.PRODUCTS.get(product) for product in self.contents)</code></pre>
+    return sum(self.PRODUCTS.get(product, 0) for product in self.contents)</code></pre>
 </details>
 </dd>
 <dt id="shoppingbasket.basket.Basket.total"><code class="name">var <span class="ident">total</span> : int</code></dt>
@@ -368,7 +368,7 @@ def total(self) -&gt; int:
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>int</code></dt>
-<dd>The total discount on the basket due to promotions.</dd>
+<dd>The total discount on the basket due to applied promotions.</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -379,7 +379,7 @@ def total_discount(self) -&gt; int:
     &#34;&#34;&#34;Compute the total discount on the basket due the applied promotions.
 
     Returns:
-        int: The total discount on the basket due to promotions.
+        int: The total discount on the basket due to applied promotions.
     &#34;&#34;&#34;
     return sum(discount for discount in self.promotion_discounts.values())</code></pre>
 </details>
@@ -426,7 +426,7 @@ def total_discount(self) -&gt; int:
 </details>
 </dd>
 <dt id="shoppingbasket.basket.Basket.apply_promotion"><code class="name flex">
-<span>def <span class="ident">apply_promotion</span></span>(<span>self, promotion_name: str, promotion_details: Dict[str, Union[str, int]])</span>
+<span>def <span class="ident">apply_promotion</span></span>(<span>self, promotion_name: str, promotion_details: Dict[str, Any]) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply the promotion to the products in the basket.</p>
@@ -434,7 +434,7 @@ def total_discount(self) -&gt; int:
 <dl>
 <dt><strong><code>promotion_name</code></strong> :&ensp;<code>str</code></dt>
 <dd>The name of the promotion to apply.</dd>
-<dt><strong><code>promotion_details</code></strong> :&ensp;<code>Dict[str, Union[str, int]]</code></dt>
+<dt><strong><code>promotion_details</code></strong> :&ensp;<code>Dict[str, Any]</code></dt>
 <dd>Details of the promotion to be applied. Keys should include qualifying_product, discounted_product, qualifying_product_quantity and percent_discount.</dd>
 </dl></div>
 <details class="source">
@@ -442,13 +442,13 @@ def total_discount(self) -&gt; int:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def apply_promotion(
-    self, promotion_name: str, promotion_details: Dict[str, Union[str, int]]
-):
+    self, promotion_name: str, promotion_details: Dict[str, Any]
+) -&gt; None:
     &#34;&#34;&#34;Apply the promotion to the products in the basket.
 
     Args:
         promotion_name (str): The name of the promotion to apply.
-        promotion_details (Dict[str, Union[str, int]]): Details of the promotion to be applied. Keys should include qualifying_product, discounted_product, qualifying_product_quantity and percent_discount.
+        promotion_details (Dict[str, Any]): Details of the promotion to be applied. Keys should include qualifying_product, discounted_product, qualifying_product_quantity and percent_discount.
     &#34;&#34;&#34;
     qualifying_product_count = self.product_count[
         promotion_details[&#34;qualifying_product&#34;]

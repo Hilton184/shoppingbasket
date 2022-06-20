@@ -57,7 +57,7 @@ class Test_AddProduct:
         name: str,
         basket: Basket,
     ):
-        """Test example of trying to add a invalid products to the basket."""
+        """Test example of trying to add an invalid product to the basket."""
         assert basket.add_product(name) is False
         assert len(basket.contents) == 0
         assert basket.subtotal == 0
@@ -174,7 +174,7 @@ class Test_ApplyPromotions:
         assert basket.product_count.get("SOUP") == 2
 
     def test_soup_bread_promotion_v3(self, basket: Basket):
-        """Test example of applying the soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products purchased for the promotion to be applied once."""
+        """Test example of applying the soup_bread promotion from a fresh basket, whereby there are sufficient qualifying products purchased for the promotion to be applied once, but not enough for the promotion to be applied twice."""
         products = ["BREAD"] * 2 + ["SOUP"] * 3
 
         for product in products:
@@ -230,7 +230,7 @@ class Test_ApplyPromotions:
         assert basket.product_count.get("SOUP") == 4
 
     def test_multiple_promotions(self, basket: Basket):
-        """Test example of applying the multiple promotions from a fresh basket."""
+        """Test example of applying multiple promotions from a fresh basket."""
         products = ["BREAD"] * 2 + ["SOUP"] * 7 + ["APPLES", "MILK"]
 
         for product in products:

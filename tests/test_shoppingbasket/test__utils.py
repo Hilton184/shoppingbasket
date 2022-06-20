@@ -29,5 +29,5 @@ class Test_CurrencyFormat:
         ],
     )
     def test_currency_format(self, input: int, expected: str):
-        """Test cases between 100 and 1000 exclusive."""
+        """Test _currency_format for numbers 0 through 9999."""
         assert _currency_format(input) == expected
